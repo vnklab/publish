@@ -129,6 +129,7 @@ th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06
 // Площадки: api — публикует сервер GitHub (нужен секрет CFG_*), assist — открываем загрузчик и копируем текст
 const PLATFORMS = [
   {key:'telegram', name:'Telegram-канал', mode:'api', title:1024, text:1024},
+  {key:'vk_manual', name:'VK Клипы (вручную)', mode:'assist', title:128, text:2200, url:'https://vk.com/clips'},
   {key:'vk', name:'VK Видео / Клипы', mode:'api', title:128, text:5000},
   {key:'youtube', name:'YouTube Shorts', mode:'api', title:100, text:5000, note:'Без аудита Google ролик через API будет приватным'},
   {key:'youtube_manual', name:'YouTube (вручную)', mode:'assist', title:100, text:5000, url:'https://studio.youtube.com'},
