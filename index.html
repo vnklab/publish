@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>VNK Publisher</title>
+<style>
+:root{--bg:#0B0A5C;--bg2:#140EAC;--card:#1A1790;--line:#2F2CC0;--ink:#F4F6FF;--muted:#A9B0E8;--lime:#DFF934;
+  --ok:#4BE39A;--warn:#FFC24B;--err:#FF6B7A;--r:14px;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1100px 700px at 10% -10%,var(--bg2),var(--bg));color:var(--ink);min-height:100vh;
+  font:15px/1.5 -apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+header{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:14px 20px;border-bottom:1px solid var(--line);position:sticky;
+  top:env(safe-area-inset-top,0);background:rgba(11,10,92,.88);backdrop-filter:blur(14px);z-index:5}
+.logo{font-weight:800;font-size:18px}.logo b{color:var(--lime)}
+nav{display:flex;gap:4px;margin-left:auto}
+nav button{background:none;border:0;color:var(--muted);font:inherit;font-weight:600;padding:8px 12px;border-radius:999px;cursor:pointer}
+nav button.on{background:var(--lime);color:#0B0A5C}
+button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
+main{max-width:1100px;margin:0 auto;padding:20px 16px 40px}
+section[hidden]{display:none}
+h2{font-size:20px;margin:0 0 14px}h3{font-size:15px;margin:0}
+.grid{display:grid;grid-template-columns:minmax(260px,360px) 1fr;gap:20px}
+@media (max-width:820px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.drop{border:2px dashed var(--line);border-radius:var(--r);min-height:300px;display:grid;place-items:center;text-align:center;cursor:pointer;
+  color:var(--muted);padding:14px}
+.drop.over{border-color:var(--lime)}
+.drop video{width:100%;max-height:520px;border-radius:10px;background:#000}
+.meta{font-size:13px;color:var(--muted);margin-top:8px}
+label{display:block;font-size:13px;color:var(--muted);margin:14px 0 6px;font-weight:600}
+input[type=text],input[type=password],textarea{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:10px 12px;font:inherit}
+textarea{min-height:110px;resize:vertical}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.count{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.plats{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-top:6px}
+.plat{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);cursor:pointer}
+.plat.off{opacity:.5;cursor:not-allowed}
+.plat input{margin-top:3px;accent-color:var(--lime);width:18px;height:18px}
+.plat b{display:block}.plat small{color:var(--muted);font-size:12px}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:4px}
+.t-api{background:rgba(75,227,154,.15);color:var(--ok)}.t-assist{background:rgba(255,194,75,.15);color:var(--warn)}.t-need{background:rgba(255,107,122,.15);color:var(--err)}
+.btn{background:var(--lime);color:#0B0A5C;border:0;border-radius:12px;padding:12px 20px;font:inherit;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}
+.btn:disabled{opacity:.4;cursor:not-allowed}.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.small{padding:7px 12px;font-size:13px;border-radius:10px}
+.status{margin-top:18px;display:flex;flex-direction:column;gap:8px}
+.st{display:grid;grid-template-columns:160px 100px 1fr;gap:10px;align-items:center;padding:12px;border-radius:12px;background:var(--bg);border:1px solid var(--line)}
+@media (max-width:640px){.st{grid-template-columns:1fr}}
+.pill{font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px;text-align:center;display:inline-block}
+.s-queued,.s-waiting{background:var(--line);color:var(--muted)}.s-running,.s-in_progress{background:rgba(223,249,52,.15);color:var(--lime)}
+.s-done,.s-success{background:rgba(75,227,154,.15);color:var(--ok)}.s-error,.s-failure{background:rgba(255,107,122,.15);color:var(--err)}
+.s-manual{background:rgba(255,194,75,.15);color:var(--warn)}
+a{color:var(--lime)}
+.note{font-size:13px;background:rgba(255,194,75,.1);border:1px solid rgba(255,194,75,.3);color:#FFE3A6;padding:10px 12px;border-radius:10px;margin-top:12px}
+.ok{color:var(--ok)}.bad{color:var(--err)}
+ol{padding-left:20px;color:var(--muted);font-size:14px}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:10px}.bar i{display:block;height:100%;width:0;background:var(--lime);transition:width .3s}
+.law{font-size:12px;color:var(--muted);margin-top:24px;border-top:1px solid var(--line);padding-top:12px}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">VNK <b>Publisher</b></div>
+  <nav>
+    <button id="tab-pub" class="on" onclick="tab('pub')">Публикация</button>
+    <button id="tab-his" onclick="tab('his')">История</button>
+    <button id="tab-acc" onclick="tab('acc')">Доступ</button>
+  </nav>
+</header>
+<main>
+<section id="acc" hidden>
+  <div class="card" style="max-width:640px">
+    <h2>Доступ к GitHub</h2>
+    <p class="count">Страница работает через ваш закрытый репозиторий: кладёт туда ролик и запускает публикацию на серверах GitHub.
+      Токен хранится только в этом браузере.</p>
+    <ol>
+      <li>Откройте <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com → Fine-grained token</a>.</li>
+      <li>Repository access → Only select → <b>vnklab/vnk-publisher-engine</b>.</li>
+      <li>Permissions: <b>Contents</b> — Read and write, <b>Actions</b> — Read and write, <b>Secrets</b> — Read-only (чтобы видеть, какие площадки настроены).</li>
+      <li>Срок — 1 год. Скопируйте токен сюда.</li>
+    </ol>
+    <label for="token">Токен GitHub</label>
+    <input type="password" id="token" placeholder="github_pat_…" autocomplete="off">
+    <label for="repo">Репозиторий</label>
+    <input type="text" id="repo" value="vnklab/vnk-publisher-engine">
+    <div class="row" style="margin-top:14px"><button class="btn small" onclick="saveAcc()">Сохранить и проверить</button>
+      <button class="btn small ghost" onclick="logout()">Выйти</button></div>
+    <p id="accRes" class="count"></p>
+  </div>
+</section>
+
+<section id="pub">
+  <div class="grid">
+    <div>
+      <div class="drop" id="drop" tabindex="0"><div><h3>Выберите ролик</h3><p>MP4 до 95 МБ — нажмите или перетащите</p></div></div>
+      <input type="file" id="file" accept="video/*" hidden>
+      <div class="meta" id="meta"></div>
+    </div>
+    <div class="card">
+      <label for="title">Заголовок</label>
+      <input type="text" id="title" placeholder="Например: Шарик играет «Горного короля»">
+      <div class="count" id="titleCount">0 знаков · YouTube 100 · VK 128 · Rutube 100</div>
+      <label for="desc">Описание</label>
+      <textarea id="desc" placeholder="Вопрос зрителю поднимает вовлечённость: «На какой секунде узнал мелодию?»"></textarea>
+      <label for="tags">Хэштеги</label>
+      <input type="text" id="tags" placeholder="vnk marblemusic григ shorts">
+      <label style="display:flex;gap:8px;align-items:center;color:var(--ink)"><input type="checkbox" id="short" checked style="accent-color:var(--lime);width:18px;height:18px"> Вертикальный ролик (Shorts, Клипы, Reels)</label>
+      <label>Площадки</label>
+      <div class="plats" id="plats"></div>
+      <div class="row" style="margin-top:16px"><button class="btn" id="go" onclick="publish()" disabled>Опубликовать</button><span class="count" id="goHint"></span></div>
+      <div class="bar" id="bar" hidden><i></i></div>
+      <div class="status" id="status"></div>
+    </div>
+  </div>
+  <p class="law">С 1 марта 2024 года реклама средств обхода блокировок в России запрещена, с 1 сентября 2025 года за неё штрафуют.
+    Российские площадки удаляют такие ролики модерацией. Тексты рекламы VPN — после юриста.</p>
+</section>
+
+<section id="his" hidden>
+  <h2>История публикаций</h2>
+  <div class="card" style="overflow-x:auto"><table><thead><tr><th>Когда</th><th>Ролик</th><th>Площадки</th></tr></thead><tbody id="hist"></tbody></table></div>
+</section>
+</main>
+
+<script>
+// Площадки: api — публикует сервер GitHub (нужен секрет CFG_*), assist — открываем загрузчик и копируем текст
+const PLATFORMS = [
+  {key:'telegram', name:'Telegram-канал', mode:'api', title:1024, text:1024},
+  {key:'vk', name:'VK Видео / Клипы', mode:'api', title:128, text:5000},
+  {key:'youtube', name:'YouTube Shorts', mode:'api', title:100, text:5000, note:'Без аудита Google ролик через API будет приватным'},
+  {key:'youtube_manual', name:'YouTube (вручную)', mode:'assist', title:100, text:5000, url:'https://studio.youtube.com'},
+  {key:'rutube', name:'Rutube', mode:'assist', title:100, text:5000, url:'https://studio.rutube.ru/uploader/'},
+  {key:'dzen', name:'Дзен', mode:'assist', title:140, text:5000, url:'https://dzen.ru/profile/editor'},
+  {key:'ok', name:'Одноклассники', mode:'api', title:200, text:4000},
+  {key:'instagram', name:'Instagram Reels', mode:'api', title:2200, text:2200},
+  {key:'tiktok', name:'TikTok', mode:'assist', title:150, text:2200, url:'https://www.tiktok.com/tiktokstudio/upload'},
+];
+const STATE = {queued:'В очереди', waiting:'Ждёт', in_progress:'Идёт', running:'Идёт', done:'Готово', success:'Готово', error:'Ошибка', failure:'Ошибка', manual:'Вручную'};
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ls = {get(k, d){ try{ const v = localStorage.getItem(k); return v===null ? d : JSON.parse(v); }catch(e){ return d; } },
+            set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }};
+let SECRETS = new Set(), FILE = null, JOB = null, POLL = null;
+
+function tab(t){ for (const k of ['pub','his','acc']){ $('#'+k).hidden = k!==t; $('#tab-'+k).classList.toggle('on', k===t); } if (t==='his') loadHist(); }
+const TOKEN = () => ls.get('gh_token', ''), REPO = () => ls.get('gh_repo', 'vnklab/vnk-publisher-engine');
+
+async function gh(path, opt = {}){
+  const r = await fetch('https://api.github.com' + path, {...opt, headers:{'Authorization':'Bearer ' + TOKEN(), 'Accept':'application/vnd.github+json',
+    'X-GitHub-Api-Version':'2022-11-28', ...(opt.body ? {'Content-Type':'application/json'} : {})}});
+  if (r.status === 204) return {};
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw Object.assign(new Error(d.message || ('HTTP ' + r.status)), {status: r.status});
+  return d;
+}
+
+// ---- доступ
+async function saveAcc(){
+  if ($('#token').value.trim()) ls.set('gh_token', $('#token').value.trim());
+  ls.set('gh_repo', $('#repo').value.trim()); $('#token').value = '';
+  $('#accRes').textContent = 'Проверяю…';
+  try { await init(); $('#accRes').innerHTML = `<span class="ok">✓ Доступ есть. Настроено площадок: ${SECRETS.size}</span>`; }
+  catch(e){ $('#accRes').innerHTML = `<span class="bad">✕ ${esc(e.message)}</span>`; }
+}
+function logout(){ ls.set('gh_token', ''); SECRETS = new Set(); renderPlats(); $('#accRes').textContent = 'Токен удалён из этого браузера'; }
+
+async function init(){
+  if (!TOKEN()) { renderPlats(); tab('acc'); return; }
+  await gh(`/repos/${REPO()}`);
+  try { const s = await gh(`/repos/${REPO()}/actions/secrets?per_page=100`); SECRETS = new Set(s.secrets.map(x => x.name)); }
+  catch(e){ SECRETS = new Set(['?']); }            // нет права на чтение секретов — считаем всё настроенным, сервер сам сообщит
+  renderPlats();
+}
+
+// ---- площадки
+function configured(p){ return p.mode==='assist' || SECRETS.has('?') || SECRETS.has('CFG_' + p.key.toUpperCase()); }
+function renderPlats(){
+  const saved = ls.get('plats', []);
+  $('#plats').innerHTML = PLATFORMS.map(p => {
+    const ok = configured(p) && TOKEN();
+    const badge = p.mode==='assist' ? '<span class="tag t-assist">вручную</span>' : (ok ? '<span class="tag t-api">авто</span>' : '<span class="tag t-need">нет ключей</span>');
+    return `<label class="plat ${ok?'':'off'}" title="${esc(p.note||'')}"><input type="checkbox" value="${p.key}" ${ok&&saved.includes(p.key)?'checked':''} ${ok?'':'disabled'} onchange="ls.set('plats', chosen()); validate()">
+      <span><b>${esc(p.name)}${badge}</b><small>${!ok && p.mode==='api' ? 'Перенесите ключи из локального приложения' : (p.mode==='assist' ? 'откроет загрузчик площадки' : 'опубликует сервер GitHub')}</small></span></label>`;
+  }).join('');
+  validate();
+}
+const chosen = () => [...document.querySelectorAll('#plats input:checked')].map(i => i.value);
+function validate(){
+  $('#titleCount').textContent = `${$('#title').value.length} знаков · YouTube 100 · VK 128 · Rutube 100`;
+  const ok = FILE && chosen().length && TOKEN();
+  $('#go').disabled = !ok; $('#goHint').textContent = !TOKEN() ? 'Нужен доступ к GitHub (вкладка «Доступ»)' : !FILE ? 'Выберите ролик' : !chosen().length ? 'Выберите площадки' : '';
+}
+['#title','#desc'].forEach(s => $(s).addEventListener('input', validate));
+
+// ---- файл
+const drop = $('#drop'), fileIn = $('#file');
+drop.onclick = () => fileIn.click(); drop.onkeydown = e => { if (e.key==='Enter'||e.key===' ') fileIn.click(); };
+drop.ondragover = e => { e.preventDefault(); drop.classList.add('over'); }; drop.ondragleave = () => drop.classList.remove('over');
+drop.ondrop = e => { e.preventDefault(); drop.classList.remove('over'); if (e.dataTransfer.files[0]) pick(e.dataTransfer.files[0]); };
+fileIn.onchange = () => fileIn.files[0] && pick(fileIn.files[0]);
+function pick(f){
+  FILE = f;
+  const url = URL.createObjectURL(f);
+  drop.innerHTML = `<video src="${url}" controls muted playsinline></video>`;
+  const v = drop.querySelector('video');
+  v.onloadedmetadata = () => { const vert = v.videoHeight > v.videoWidth; $('#short').checked = vert;
+    $('#meta').textContent = `${f.name} · ${(f.size/1048576).toFixed(1)} МБ · ${v.videoWidth}×${v.videoHeight} · ${v.duration.toFixed(1)} с` + (f.size > 95*1048576 ? ' · больше 95 МБ — GitHub не примет, сожмите' : '') + (f.size > 50*1048576 ? ' · Telegram примет только до 50 МБ' : ''); };
+  if (!$('#title').value) $('#title').value = f.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ');
+  validate();
+}
+
+// ---- текст для ручных площадок (как на сервере: заголовок, описание, хэштеги, обрезка)
+function textFor(p){
+  const tags = $('#tags').value.split(/[\s,]+/).filter(Boolean).map(t => '#' + t.replace(/^#/, '')).join(' ');
+  const cut = (s, n) => s.length <= n ? s : s.slice(0, n - 1).trimEnd() + '…';
+  return [cut($('#title').value.trim(), p.title), [$('#desc').value.trim(), tags].filter(Boolean).join('\n\n')].filter(Boolean).join('\n\n').slice(0, p.text);
+}
+
+// ---- публикация
+const b64 = f => new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(r.result.split(',')[1]); r.onerror = no; r.readAsDataURL(f); });
+async function publish(){
+  if (FILE.size > 95*1048576) return alert('Файл больше 95 МБ — GitHub не примет его через API. Сожмите ролик.');
+  $('#go').disabled = true;
+  const plats = chosen(), api = plats.filter(k => PLATFORMS.find(p => p.key===k).mode==='api');
+  JOB = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14) + '-' + Math.random().toString(36).slice(2, 7);
+  const entry = {id: JOB, time: new Date().toLocaleString('ru-RU'), title: $('#title').value, file: FILE.name, platforms: plats, manual: {}};
+  const hist = ls.get('hist', []); hist.unshift(entry); ls.set('hist', hist.slice(0, 200));
+  renderStatus({}, null);
+  if (api.length){
+    const bar = $('#bar'), fill = bar.querySelector('i'); bar.hidden = false; fill.style.width = '15%';
+    try {
+      setMsg('Кладу ролик в закрытый репозиторий…');
+      const path = `uploads/${JOB}/${FILE.name.replace(/[^\w.\-]+/g, '_')}`;
+      await gh(`/repos/${REPO()}/contents/${path}`, {method:'PUT', body: JSON.stringify({message:`upload ${JOB}`, content: await b64(FILE), branch:'uploads'})});
+      fill.style.width = '70%'; setMsg('Запускаю публикацию на серверах GitHub…');
+      await gh(`/repos/${REPO()}/actions/workflows/publish.yml/dispatches`, {method:'POST', body: JSON.stringify({ref:'main', inputs:{
+        job_id: JOB, file: path, title: $('#title').value, description: $('#desc').value, tags: $('#tags').value,
+        platforms: api.join(','), short: String($('#short').checked)}})});
+      fill.style.width = '100%'; setTimeout(() => bar.hidden = true, 800);
+      clearInterval(POLL); POLL = setInterval(pollJob, 5000); pollJob();
+    } catch(e){ setMsg('Ошибка: ' + e.message); bar.hidden = true; $('#go').disabled = false; }
+  }
+}
+function setMsg(m){ const el = $('#runmsg'); if (el) el.textContent = m; }
+
+function renderStatus(results, run){
+  const plats = (ls.get('hist', []).find(h => h.id===JOB) || {platforms: []}).platforms;
+  const runLine = run ? `<div class="count">Задача GitHub: <span class="pill s-${run.status==='completed' ? (run.conclusion==='success'?'success':'failure') : run.status}">${STATE[run.status==='completed'?(run.conclusion==='success'?'success':'failure'):run.status]||run.status}</span> · <a href="${run.html_url}" target="_blank" rel="noopener">журнал</a></div>` : '';
+  $('#status').innerHTML = `<h3>Статус</h3><div class="count" id="runmsg"></div>${runLine}` + plats.map(k => {
+    const p = PLATFORMS.find(x => x.key===k);
+    if (p.mode==='assist'){
+      const done = (ls.get('hist', []).find(h => h.id===JOB) || {manual:{}}).manual[k];
+      return `<div class="st"><b>${esc(p.name)}</b><span class="pill s-${done?'done':'manual'}">${done?'Готово':'Вручную'}</span><div>
+        <div class="row"><a class="btn small" href="${p.url}" target="_blank" rel="noopener" onclick="copyText('${k}')">Открыть загрузчик</a>
+        <button class="btn small ghost" onclick="copyText('${k}')">Скопировать текст</button></div>
+        <div class="row" style="margin-top:8px"><input type="text" id="lnk-${k}" placeholder="ссылка на ролик" value="${esc(done||'')}" style="flex:1;min-width:160px">
+        <button class="btn small ghost" onclick="saveLink('${k}')">Сохранить</button></div></div></div>`;
+    }
+    const s = results[k] || {state: run && run.status==='completed' ? 'error' : 'queued', message: run && run.status==='completed' ? 'Нет результата — откройте журнал' : 'Ждёт сервер GitHub'};
+    return `<div class="st"><b>${esc(p.name)}</b><span class="pill s-${s.state}">${STATE[s.state]||s.state}</span><div>${esc(s.message)}${s.url?` · <a href="${esc(s.url)}" target="_blank" rel="noopener">открыть</a>`:''}</div></div>`;
+  }).join('');
+}
+async function copyText(k){
+  const t = textFor(PLATFORMS.find(p => p.key===k));
+  try { await navigator.clipboard.writeText(t); setMsg('Текст скопирован — вставьте его на площадке'); } catch(e){ prompt('Скопируйте текст:', t); }
+}
+function saveLink(k){ const h = ls.get('hist', []); const e = h.find(x => x.id===JOB); if (e){ e.manual[k] = $('#lnk-'+k).value; ls.set('hist', h); } poll1(); }
+
+async function pollJob(){ await poll1(); }
+async function poll1(){
+  let run = null, results = {};
+  try {
+    const runs = await gh(`/repos/${REPO()}/actions/workflows/publish.yml/runs?per_page=15&event=workflow_dispatch`);
+    run = runs.workflow_runs.find(r => r.display_title === 'publish ' + JOB) || null;
+    const f = await gh(`/repos/${REPO()}/contents/results/${JOB}.json?ref=results`).catch(() => null);
+    if (f && f.content) results = JSON.parse(decodeURIComponent(escape(atob(f.content.replace(/\n/g, ''))))).results || {};
+  } catch(e){}
+  renderStatus(results, run);
+  const h = ls.get('hist', []); const e = h.find(x => x.id===JOB); if (e){ e.results = results; ls.set('hist', h); }
+  if (run && run.status==='completed') clearInterval(POLL);
+}
+
+// ---- история (локальная для этого браузера + итоги с сервера)
+async function loadHist(){
+  const h = ls.get('hist', []);
+  $('#hist').innerHTML = h.length ? h.map(e => `<tr><td>${esc(e.time)}</td><td><b>${esc(e.title||'—')}</b><br><span class="count">${esc(e.file)}</span></td><td>${
+    e.platforms.map(k => { const p = PLATFORMS.find(x => x.key===k) || {name:k}; const r = (e.results||{})[k]; const m = (e.manual||{})[k];
+      const st = m ? 'done' : r ? r.state : (p.mode==='assist' ? 'manual' : 'queued'); const url = m || (r && r.url);
+      return `<div><span class="pill s-${st}">${STATE[st]}</span> ${esc(p.name)} ${url?`<a href="${esc(url)}" target="_blank" rel="noopener">ссылка</a>`:''}</div>`; }).join('')}</td></tr>`).join('')
+    : '<tr><td colspan="3" class="count">Пока пусто</td></tr>';
+}
+
+init().catch(e => { $('#accRes').innerHTML = `<span class="bad">✕ ${esc(e.message)}</span>`; tab('acc'); });
+</script>
+</body>
+</html>
